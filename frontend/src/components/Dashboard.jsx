@@ -7,6 +7,7 @@ export default function Dashboard() {
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [recipients, setRecipients] = useState('');
+  const [bodyType, setBodyType] = useState('html'); // 'html' or 'text'
   
   // SMTP Configuration State
   const [useCustomSmtp, setUseCustomSmtp] = useState(false);
@@ -178,6 +179,7 @@ export default function Dashboard() {
       const payload = {
         subject,
         body,
+        bodyType,
         recipients,
         smtpConfig: useCustomSmtp ? smtpConfig : null,
       };
@@ -277,11 +279,33 @@ export default function Dashboard() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="body">Email Body (HTML supported)</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <label htmlFor="body">Email Body</label>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  className={`btn ${bodyType === 'html' ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ padding: '0.3rem 0.8rem', fontSize: '0.75rem', borderRadius: '4px' }}
+                  onClick={() => setBodyType('html')}
+                  disabled={loading}
+                >
+                  HTML Mode
+                </button>
+                <button
+                  type="button"
+                  className={`btn ${bodyType === 'text' ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ padding: '0.3rem 0.8rem', fontSize: '0.75rem', borderRadius: '4px' }}
+                  onClick={() => setBodyType('text')}
+                  disabled={loading}
+                >
+                  Plain Text
+                </button>
+              </div>
+            </div>
             <textarea
               id="body"
               className="input-control"
-              placeholder="<h1>Hello!</h1><p>This is a bulk test email.</p>"
+              placeholder={bodyType === 'html' ? "<h1>Hello!</h1><p>This is a bulk test email.</p>" : "Hello!\nThis is a bulk test email."}
               value={body}
               onChange={(e) => setBody(e.target.value)}
               disabled={loading}

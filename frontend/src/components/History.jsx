@@ -224,8 +224,19 @@ export default function History() {
                         )}
 
                         <div>
-                          <h5 style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>Email Content</h5>
-                          <div className="email-body-preview" dangerouslySetInnerHTML={{ __html: campaign.body }} />
+                          <h5 style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span>Email Content</span>
+                            <span className="badge" style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', textTransform: 'uppercase', background: campaign.bodyType === 'text' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(168, 85, 247, 0.15)', color: campaign.bodyType === 'text' ? 'var(--info)' : 'var(--accent-secondary)' }}>
+                              {campaign.bodyType || 'html'}
+                            </span>
+                          </h5>
+                          {campaign.bodyType === 'text' ? (
+                            <div className="email-body-preview" style={{ whiteSpace: 'pre-wrap' }}>
+                              {campaign.body}
+                            </div>
+                          ) : (
+                            <div className="email-body-preview" dangerouslySetInnerHTML={{ __html: campaign.body }} />
+                          )}
                         </div>
 
                         <div>

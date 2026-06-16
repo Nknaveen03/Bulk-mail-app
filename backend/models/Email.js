@@ -31,6 +31,11 @@ const emailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  bodyType: {
+    type: String,
+    enum: ['html', 'text'],
+    default: 'html',
+  },
   recipients: [recipientSchema],
   status: {
     type: String,

@@ -85,7 +85,7 @@ const createTransporter = async (customSmtp) => {
 // @route   POST /api/mail/send
 // @access  Private
 router.post('/send', protect, async (req, res) => {
-  const { subject, body, recipients, smtpConfig } = req.body;
+  const { subject, body, bodyType, recipients, smtpConfig } = req.body;
 
   if (!subject || !body || !recipients) {
     return res.status(400).json({ message: 'Subject, body, and recipients are required' });
@@ -131,6 +131,7 @@ router.post('/send', protect, async (req, res) => {
     emailRecord = new Email({
       subject,
       body,
+      bodyType: bodyType || 'html',
       recipients: dbRecipients,
       status: 'sending',
       totalRecipients: validRecipients.length,
@@ -152,12 +153,19 @@ router.post('/send', protect, async (req, res) => {
       for (let i = 0; i < emailRecord.recipients.length; i++) {
         const recipient = emailRecord.recipients[i];
         try {
-          const info = await transporter.sendMail({
+          const mailOptions = {
             from: `"Bulk Mail Sender" <${configInfo.user}>`,
             to: recipient.email,
             subject: subject,
-            html: body, // support html body
-          });
+          };
+          
+          if (emailRecord.bodyType === 'text') {
+            mailOptions.text = body;
+          } else {
+            mailOptions.html = body;
+          }
+
+          const info = await transporter.sendMail(mailOptions);
 
           recipient.status = 'success';
           if (isEthereal) {
